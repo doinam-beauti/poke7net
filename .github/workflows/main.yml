@@ -1,9 +1,9 @@
 name: 7net Monitor
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: "*/5 * * * *"
-  workflow_dispatch:
 
 jobs:
   check:
@@ -12,16 +12,14 @@ jobs:
     steps:
       - name: Check stock
         run: |
-          PAGE=$(curl -L "https://7net.omni7.jp/detail/2110695509")
+          PAGE=$(curl -L -s "https://7net.omni7.jp/detail/2110695509")
 
           if echo "$PAGE" | grep -q "カートに入れる"; then
-            MESSAGE="🟢 7net CÓ HÀNG!
-
-https://7net.omni7.jp/detail/2110695509"
+            curl -s -X POST "https://api.telegram.org/bot${{ secrets.BOT_TOKEN }}/sendMessage" \
+              -d chat_id="${{ secrets.CHAT_ID }}" \
+              --data-urlencode "text=🟢 7net CÓ HÀNG! https://7net.omni7.jp/detail/2110695509"
           else
-            MESSAGE="🔴 7net vẫn hết hàng."
+            curl -s -X POST "https://api.telegram.org/bot${{ secrets.BOT_TOKEN }}/sendMessage" \
+              -d chat_id="${{ secrets.CHAT_ID }}" \
+              --data-urlencode "text=🔴 7net vẫn hết hàng."
           fi
-
-          curl -s -X POST "https://api.telegram.org/bot${{ secrets.BOT_TOKEN }}/sendMessage" \
-          -d chat_id="${{ secrets.CHAT_ID }}" \
-          -d text="$MESSAGE"
