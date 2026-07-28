@@ -10,16 +10,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check stock
+      - name: Send test message
         run: |
-          PAGE=$(curl -L -s "https://7net.omni7.jp/detail/2110695509")
-
-          if echo "$PAGE" | grep -q "カートに入れる"; then
-            curl -s -X POST "https://api.telegram.org/bot${{ secrets.BOT_TOKEN }}/sendMessage" \
-              -d chat_id="${{ secrets.CHAT_ID }}" \
-              --data-urlencode "text=🟢 7net CÓ HÀNG! https://7net.omni7.jp/detail/2110695509"
-          else
-            curl -s -X POST "https://api.telegram.org/bot${{ secrets.BOT_TOKEN }}/sendMessage" \
-              -d chat_id="${{ secrets.CHAT_ID }}" \
-              --data-urlencode "text=🔴 7net vẫn hết hàng."
-          fi
+          curl -s -X POST "https://api.telegram.org/bot${{ secrets.BOT_TOKEN }}/sendMessage" \
+          -d chat_id="${{ secrets.CHAT_ID }}" \
+          --data-urlencode "text=✅ Bot 7net đang hoạt động"
+          
