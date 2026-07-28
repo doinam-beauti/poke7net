@@ -1,0 +1,27 @@
+name: 7net Monitor
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "*/5 * * * *"
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check stock
+        shell: bash
+        run: |
+          PAGE=$(curl -L -s "https://7net.omni7.jp/detail/2110695509")
+
+          if echo "$PAGE" | grep -q "カート"; then
+            TEXT="🟢 7net CÓ HÀNG
+https://7net.omni7.jp/detail/2110695509"
+          else
+            TEXT="🔴 7net vẫn hết hàng"
+          fi
+
+          curl -s "https://api.telegram.org/bot${{ secrets.BOT_TOKEN }}/sendMessage" \
+          -d chat_id="${{ secrets.CHAT_ID }}" \
+          --data-urlencode "text=$TEXT"
